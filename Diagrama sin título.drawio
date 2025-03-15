@@ -1,67 +1,113 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 Edg/134.0.0.0" version="26.1.1">
   <diagram name="Página-1" id="UukYnP5Gz-hjOmvByLk4">
-    <mxGraphModel>
+    <mxGraphModel dx="1042" dy="565" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="2" value="Inicio" style="whiteSpace=wrap;strokeWidth=2;" vertex="1" parent="1">
-          <mxGeometry x="71" y="8" width="99" height="54" as="geometry" />
+        <mxCell id="wiS48bseuo1nzFtTOPLk-23" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="2" target="wiS48bseuo1nzFtTOPLk-22">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="3" value="Definir tema" style="rounded=1;arcSize=20;strokeWidth=2" vertex="1" parent="1">
+        <mxCell id="2" value="PILAS DE PROGRAMACION" style="whiteSpace=wrap;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry x="370" y="10" width="99" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="3" value="QUE ES UNA PILA ?" style="rounded=1;arcSize=20;strokeWidth=2" parent="1" vertex="1">
           <mxGeometry x="60" y="134" width="120" height="54" as="geometry" />
         </mxCell>
-        <mxCell id="4" value="Identificar conceptos clave" style="rounded=1;arcSize=20;strokeWidth=2" vertex="1" parent="1">
-          <mxGeometry x="8" y="261" width="224" height="54" as="geometry" />
-        </mxCell>
-        <mxCell id="5" value="Determinar relaciones" style="rounded=1;arcSize=20;strokeWidth=2" vertex="1" parent="1">
+        <mxCell id="5" value="Determinar relaciones" style="rounded=1;arcSize=20;strokeWidth=2" parent="1" vertex="1">
           <mxGeometry x="26" y="387" width="189" height="54" as="geometry" />
         </mxCell>
-        <mxCell id="6" value="Crear mapa conceptual" style="rounded=1;arcSize=20;strokeWidth=2" vertex="1" parent="1">
+        <mxCell id="6" value="Crear mapa conceptual" style="rounded=1;arcSize=20;strokeWidth=2" parent="1" vertex="1">
           <mxGeometry x="22" y="514" width="197" height="54" as="geometry" />
         </mxCell>
-        <mxCell id="7" value="Revisar y modificar" style="rounded=1;arcSize=20;strokeWidth=2" vertex="1" parent="1">
+        <mxCell id="7" value="Revisar y modificar" style="rounded=1;arcSize=20;strokeWidth=2" parent="1" vertex="1">
           <mxGeometry x="37" y="640" width="167" height="54" as="geometry" />
         </mxCell>
-        <mxCell id="8" value="Finalizar" style="rounded=1;arcSize=20;strokeWidth=2" vertex="1" parent="1">
+        <mxCell id="8" value="Finalizar" style="rounded=1;arcSize=20;strokeWidth=2" parent="1" vertex="1">
           <mxGeometry x="74" y="766" width="92" height="54" as="geometry" />
         </mxCell>
-        <mxCell id="9" value="Fin" style="whiteSpace=wrap;strokeWidth=2;" vertex="1" parent="1">
+        <mxCell id="9" value="Fin" style="whiteSpace=wrap;strokeWidth=2;" parent="1" vertex="1">
           <mxGeometry x="79" y="893" width="82" height="54" as="geometry" />
         </mxCell>
-        <mxCell id="10" value="Paso 1" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0.01;" edge="1" parent="1" source="2" target="3">
+        <mxCell id="10" value="" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0.01;" parent="1" source="2" target="3" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="330" y="100" />
+              <mxPoint x="240" y="20" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="11" value="" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1.01;" parent="1" source="3" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+            <mxPoint x="120" y="250" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="12" value="Paso 3" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" parent="1" target="5" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+            <mxPoint x="128" y="300" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="13" value="Paso 4" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=-0.01;" parent="1" source="5" target="6" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="11" value="Paso 2" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1.01;entryX=0.5;entryY=0;" edge="1" parent="1" source="3" target="4">
+        <mxCell id="14" value="Paso 5" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=0.99;entryX=0.5;entryY=0;" parent="1" source="6" target="7" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="12" value="Paso 3" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="4" target="5">
+        <mxCell id="15" value="Paso 6" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0.01;" parent="1" source="7" target="8" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="13" value="Paso 4" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=-0.01;" edge="1" parent="1" source="5" target="6">
+        <mxCell id="16" value="Fin" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1.01;entryX=0.5;entryY=0;" parent="1" source="8" target="9" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="14" value="Paso 5" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=0.99;entryX=0.5;entryY=0;" edge="1" parent="1" source="6" target="7">
+        <mxCell id="wiS48bseuo1nzFtTOPLk-17" value="&lt;p data-pm-slice=&quot;1 1 [&amp;quot;list&amp;quot;,{&amp;quot;spread&amp;quot;:false,&amp;quot;start&amp;quot;:56,&amp;quot;end&amp;quot;:219},&amp;quot;regular_list_item&amp;quot;,{&amp;quot;start&amp;quot;:56,&amp;quot;end&amp;quot;:154}]&quot;&gt;&lt;span style=&quot;color: rgb(17, 17, 17); font-family: Roboto, sans-serif; text-align: start; white-space-collapse: preserve; background-color: rgb(247, 247, 247);&quot;&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;Una pila (pila) es una colección de elementos con dos operaciones principales&lt;/font&gt;&lt;/span&gt;&lt;/p&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="80" y="250" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="wiS48bseuo1nzFtTOPLk-31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="wiS48bseuo1nzFtTOPLk-21" target="wiS48bseuo1nzFtTOPLk-30">
           <mxGeometry relative="1" as="geometry">
-            <Array as="points" />
+            <Array as="points">
+              <mxPoint x="590" y="280" />
+              <mxPoint x="650" y="280" />
+            </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="15" value="Paso 6" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0.01;" edge="1" parent="1" source="7" target="8">
+        <mxCell id="wiS48bseuo1nzFtTOPLk-21" value="&lt;span style=&quot;color: rgb(17, 17, 17); font-family: Roboto, sans-serif; text-align: start; white-space-collapse: preserve; background-color: rgb(247, 247, 247);&quot;&gt;&lt;font style=&quot;font-size: 16px;&quot;&gt;Acceso restringido&lt;/font&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="520" y="240" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="wiS48bseuo1nzFtTOPLk-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="wiS48bseuo1nzFtTOPLk-22" target="wiS48bseuo1nzFtTOPLk-21">
           <mxGeometry relative="1" as="geometry">
-            <Array as="points" />
+            <Array as="points">
+              <mxPoint x="450" y="180" />
+              <mxPoint x="570" y="180" />
+              <mxPoint x="570" y="250" />
+            </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="16" value="Fin" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1.01;entryX=0.5;entryY=0;" edge="1" parent="1" source="8" target="9">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points" />
-          </mxGeometry>
+        <mxCell id="wiS48bseuo1nzFtTOPLk-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="wiS48bseuo1nzFtTOPLk-22" target="wiS48bseuo1nzFtTOPLk-26">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="wiS48bseuo1nzFtTOPLk-22" value="&lt;span style=&quot;color: rgb(17, 17, 17); font-family: Roboto, sans-serif; text-align: start; white-space-collapse: preserve; background-color: rgb(247, 247, 247);&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;span&gt;&lt;span&gt;¿Características de una pila?&lt;/span&gt;&lt;/span&gt;&lt;/font&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="390" y="128" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="wiS48bseuo1nzFtTOPLk-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.375;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="wiS48bseuo1nzFtTOPLk-26" target="wiS48bseuo1nzFtTOPLk-28">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="wiS48bseuo1nzFtTOPLk-26" value="&lt;span style=&quot;color: rgb(17, 17, 17); font-family: Roboto, sans-serif; text-align: start; white-space-collapse: preserve; background-color: rgb(247, 247, 247);&quot;&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;Los elementos se agregan o eliminan del mismo extremo&lt;/font&gt;&lt;/span&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="410" y="230" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="wiS48bseuo1nzFtTOPLk-28" value="&lt;span data-lucid-content=&quot;{&amp;quot;t&amp;quot;:&amp;quot;LIFO (Last In, First Out)&amp;quot;,&amp;quot;m&amp;quot;:[{&amp;quot;s&amp;quot;:0,&amp;quot;n&amp;quot;:&amp;quot;a&amp;quot;,&amp;quot;v&amp;quot;:&amp;quot;center&amp;quot;},{&amp;quot;s&amp;quot;:0,&amp;quot;n&amp;quot;:&amp;quot;s&amp;quot;,&amp;quot;v&amp;quot;:18,&amp;quot;e&amp;quot;:25},{&amp;quot;s&amp;quot;:0,&amp;quot;n&amp;quot;:&amp;quot;fsp&amp;quot;,&amp;quot;v&amp;quot;:&amp;quot;ss_presetShapeStyle2_textStyle&amp;quot;,&amp;quot;e&amp;quot;:25},{&amp;quot;s&amp;quot;:0,&amp;quot;n&amp;quot;:&amp;quot;fsp2&amp;quot;,&amp;quot;v&amp;quot;:&amp;quot;ss_presetShapeStyle2_textStyle&amp;quot;,&amp;quot;e&amp;quot;:25}]}&quot; data-lucid-type=&quot;application/vnd.lucid.text&quot;&gt;&lt;span style=&quot;font-size: 13.5px;&quot;&gt;LIFO (último en entrar, primero en salir)&lt;/span&gt;&lt;/span&gt;" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="1">
+          <mxGeometry x="330" y="350" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="wiS48bseuo1nzFtTOPLk-30" value="&lt;span style=&quot;color: rgb(17, 17, 17); font-family: Roboto, sans-serif; text-align: start; white-space-collapse: preserve; background-color: rgb(247, 247, 247);&quot;&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;Para acceder a los elementos que no son top es necesario eliminar todos los elementos anteriores&lt;/font&gt;&lt;/span&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="500" y="340" width="80" height="80" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
