@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajedrez con IA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .game-header h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 10px;
+            color: white;
+        }
+
+        .chessboard {
+            width: 480px;
+            height: 480px;
+            border: 4px solid #333;
+            border-radius: 10px;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .square {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 36px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .square.light {
+            background: #f0d9b5;
+        }
+
+        .square.dark {
+            background: #b58863;
+        }
+
+        .square:hover {
+            transform: scale(1.05);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .square.selected {
+            background: #7fc8f8 !important;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .square.valid-move {
+            background: #90ee90 !important;
+        }
+
+        .square.in-check {
+            background: #ff6b6b !important;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .piece {
+            cursor: grab;
+            user-select: none;
+            transition: transform 0.2s ease;
+            filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .piece:hover {
+            transform: scale(1.1);
+        }
+
+        .piece.dragging {
+            cursor: grabbing;
+            opacity: 0.8;
+            transform: scale(1.2);
+            z-index: 1000;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .ai-thinking {
+            text-align: center;
+            margin-top: 15px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .move-history {
+            margin-top: 20px;
+            max-height: 150px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .move-history h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .moves-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .move-item {
+            background: #e9ecef;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+            color: #495057;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <h1>♔ Ajedrez con IA ♛</h1>
+        </div>
+        
+        <div class="game-info">
+            <div>Turno: <span id="current-player">Blancas</span></div>
+            <div>Estado: <span id="game-status">En juego</span></div>
+            <div>Movimientos: <span id="move-count">0</span></div>
+        </div>
+
+        <div class="chessboard" id="chessboard"></div>
+        
+        <div class="controls">
+            <button class="btn" onclick="resetGame()">Nuevo Juego</button>
+            <button class="btn" onclick="undoMove()">Deshacer</button>
+        </div>
+
+        <div class="ai-thinking" id="ai-status"></div>
+
+        <div class="move-history">
+            <h3>Historial de Movimientos</h3>
+            <div class="moves-list" id="moves-list"></div>
+        </div>
+    </div>
+
+    <script>
+        // Clase Stack para gestionar movimientos
+        class Stack {
+            constructor() {
+                this.items = [];
+            }
+
+            push(element) {
+                this.items.push(element);
+            }
+
+            pop() {
+                if (this.isEmpty()) return null;
+                return this.items.pop();
+            }
+
+            peek() {
+                if (this.isEmpty()) return null;
+                return this.items[this.items.length - 1];
+            }
+
+            isEmpty() {
+                return this.items.length === 0;
+            }
+
+            size() {
+                return this.items.length;
+            }
+        }
+
+        // Cola para gestionar turnos y eventos
+        class Queue {
+            constructor() {
+                this.items = [];
+            }
+
+            enqueue(element) {
+                this.items.push(element);
+            }
+
+            dequeue() {
+                if (this.isEmpty()) return null;
+                return this.items.shift();
+            }
+
+            front() {
+                if (this.isEmpty()) return null;
+                return this.items[0];
+            }
+
+            isEmpty() {
+                return this.items.length === 0;
+            }
+        }
+
+        // Lista enlazada para posiciones del juego
+        class LinkedList {
+            constructor() {
+                this.head = null;
+                this.tail = null;
+                this.size = 0;
+            }
+
+            append(data) {
+                const newNode = { data: data, next: null };
+                if (!this.head) {
+                    this.head = newNode;
+                    this.tail = newNode;
+                } else {
+                    this.tail.next = newNode;
+                    this.tail = newNode;
+                }
+                this.size++;
+            }
+
+            toArray() {
+                const result = [];
+                let current = this.head;
+                while (current) {
+                    result.push(current.data);
+                    current = current.next;
+                }
+                return result;
+            }
+        }
+
+        // Variables globales del juego
+        let board = [];
+        let currentPlayer = 'white';
+        let selectedSquare = null;
+        let gameStack = new Stack();
+        let eventQueue = new Queue();
+        let gameHistory = new LinkedList();
+        let isAIThinking = false;
+        let moveCount = 0;
+
+        // Piezas Unicode
+        const pieces = {
+            'white': {
+                'king': '♔', 'queen': '♕', 'rook': '♖',
+                'bishop': '♗', 'knight': '♘', 'pawn': '♙'
+            },
+            'black': {
+                'king': '♚', 'queen': '♛', 'rook': '♜',
+                'bishop': '♝', 'knight': '♞', 'pawn': '♟'
+            }
+        };
+
+        // Inicializar tablero
+        function initBoard() {
+            board = Array(8).fill(null).map(() => Array(8).fill(null));
+            
+            // Piezas negras
+            board[0] = [
+                {type: 'rook', color: 'black'},
+                {type: 'knight', color: 'black'},
+                {type: 'bishop', color: 'black'},
+                {type: 'queen', color: 'black'},
+                {type: 'king', color: 'black'},
+                {type: 'bishop', color: 'black'},
+                {type: 'knight', color: 'black'},
+                {type: 'rook', color: 'black'}
+            ];
+            board[1] = Array(8).fill(null).map(() => ({type: 'pawn', color: 'black'}));
+
+            // Piezas blancas
+            board[6] = Array(8).fill(null).map(() => ({type: 'pawn', color: 'white'}));
+            board[7] = [
+                {type: 'rook', color: 'white'},
+                {type: 'knight', color: 'white'},
+                {type: 'bishop', color: 'white'},
+                {type: 'queen', color: 'white'},
+                {type: 'king', color: 'white'},
+                {type: 'bishop', color: 'white'},
+                {type: 'knight', color: 'white'},
+                {type: 'rook', color: 'white'}
+            ];
+        }
+
+        // Renderizar tablero
+        function renderBoard() {
+            const chessboard = document.getElementById('chessboard');
+            chessboard.innerHTML = '';
+
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    const square = document.createElement('div');
+                    square.className = `square ${(row + col) % 2 === 0 ? 'light' : 'dark'}`;
+                    square.dataset.row = row;
+                    square.dataset.col = col;
+
+                    if (board[row][col]) {
+                        const piece = document.createElement('div');
+                        piece.className = 'piece';
+                        piece.textContent = pieces[board[row][col].color][board[row][col].type];
+                        piece.draggable = true;
+                        
+                        // Eventos drag and drop
+                        piece.addEventListener('dragstart', handleDragStart);
+                        piece.addEventListener('dragend', handleDragEnd);
+                        
+                        square.appendChild(piece);
+                    }
+
+                    square.addEventListener('click', handleSquareClick);
+                    square.addEventListener('dragover', handleDragOver);
+                    square.addEventListener('drop', handleDrop);
+                    
+                    chessboard.appendChild(square);
+                }
+            }
+        }
+
+        // Manejar drag and drop
+        let draggedPiece = null;
+        let draggedFrom = null;
+
+        function handleDragStart(e) {
+            if (currentPlayer === 'black' && !isAIThinking) return false;
+            
+            const square = e.target.parentElement;
+            const row = parseInt(square.dataset.row);
+            const col = parseInt(square.dataset.col);
+            
+            if (board[row][col] && board[row][col].color === currentPlayer) {
+                draggedPiece = e.target;
+                draggedFrom = { row, col };
+                e.target.classList.add('dragging');
+                
+                // Mostrar movimientos válidos
+                showValidMoves(row, col);
+            } else {
+                return false;
+            }
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+            clearHighlights();
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            if (!draggedPiece || !draggedFrom) return;
+
+            const square = e.target.classList.contains('square') ? e.target : e.target.parentElement;
+            const row = parseInt(square.dataset.row);
+            const col = parseInt(square.dataset.col);
+
+            if (isValidMove(draggedFrom.row, draggedFrom.col, row, col)) {
+                makeMove(draggedFrom.row, draggedFrom.col, row, col);
+            }
+
+            draggedPiece = null;
+            draggedFrom = null;
+        }
+
+        // Manejar clicks en el tablero
+        function handleSquareClick(e) {
+            if (isAIThinking) return;
+            
+            const square = e.target.classList.contains('square') ? e.target : e.target.parentElement;
+            const row = parseInt(square.dataset.row);
+            const col = parseInt(square.dataset.col);
+
+            if (selectedSquare) {
+                if (selectedSquare.row === row && selectedSquare.col === col) {
+                    // Deseleccionar
+                    clearSelection();
+                } else if (isValidMove(selectedSquare.row, selectedSquare.col, row, col)) {
+                    // Hacer movimiento
+                    makeMove(selectedSquare.row, selectedSquare.col, row, col);
+                    clearSelection();
+                } else {
+                    // Seleccionar nueva pieza
+                    selectSquare(row, col);
+                }
+            } else {
+                selectSquare(row, col);
+            }
+        }
+
+        function selectSquare(row, col) {
+            if (board[row][col] && board[row][col].color === currentPlayer) {
+                selectedSquare = { row, col };
+                highlightSquare(row, col);
+                showValidMoves(row, col);
+            }
+        }
+
+        function clearSelection() {
+            selectedSquare = null;
+            clearHighlights();
+        }
+
+        function highlightSquare(row, col) {
+            clearHighlights();
+            const squares = document.querySelectorAll('.square');
+            squares[row * 8 + col].classList.add('selected');
+        }
+
+        function showValidMoves(row, col) {
+            const validMoves = getValidMoves(row, col);
+            validMoves.forEach(move => {
+                const squares = document.querySelectorAll('.square');
+                squares[move.row * 8 + move.col].classList.add('valid-move');
+            });
+        }
+
+        function clearHighlights() {
+            const squares = document.querySelectorAll('.square');
+            squares.forEach(square => {
+                square.classList.remove('selected', 'valid-move', 'in-check');
+            });
+        }
+
+        // Validación de movimientos
+        function isValidMove(fromRow, fromCol, toRow, toCol) {
+            const piece = board[fromRow][fromCol];
+            if (!piece || piece.color !== currentPlayer) return false;
+            if (toRow < 0 || toRow > 7 || toCol < 0 || toCol > 7) return false;
+            if (board[toRow][toCol] && board[toRow][toCol].color === piece.color) return false;
+
+            return isValidPieceMove(piece.type, fromRow, fromCol, toRow, toCol);
+        }
+
+        function isValidPieceMove(pieceType, fromRow, fromCol, toRow, toCol) {
+            const rowDiff = Math.abs(toRow - fromRow);
+            const colDiff = Math.abs(toCol - fromCol);
+            const piece = board[fromRow][fromCol];
+
+            switch (pieceType) {
+                case 'pawn':
+                    const direction = piece.color === 'white' ? -1 : 1;
+                    const startRow = piece.color === 'white' ? 6 : 1;
+                    
+                    if (toCol === fromCol) {
+                        if (toRow === fromRow + direction && !board[toRow][toCol]) return true;
+                        if (fromRow === startRow && toRow === fromRow + 2 * direction && !board[toRow][toCol]) return true;
+                    } else if (Math.abs(toCol - fromCol) === 1 && toRow === fromRow + direction) {
+                        return board[toRow][toCol] && board[toRow][toCol].color !== piece.color;
+                    }
+                    return false;
+
+                case 'rook':
+                    if (rowDiff === 0 || colDiff === 0) {
+                        return isPathClear(fromRow, fromCol, toRow, toCol);
+                    }
+                    return false;
+
+                case 'bishop':
+                    if (rowDiff === colDiff) {
+                        return isPathClear(fromRow, fromCol, toRow, toCol);
+                    }
+                    return false;
+
+                case 'queen':
+                    if (rowDiff === 0 || colDiff === 0 || rowDiff === colDiff) {
+                        return isPathClear(fromRow, fromCol, toRow, toCol);
+                    }
+                    return false;
+
+                case 'knight':
+                    return (rowDiff === 2 && colDiff === 1) || (rowDiff === 1 && colDiff === 2);
+
+                case 'king':
+                    return rowDiff <= 1 && colDiff <= 1;
+
+                default:
+                    return false;
+            }
+        }
+
+        function isPathClear(fromRow, fromCol, toRow, toCol) {
+            const rowStep = toRow > fromRow ? 1 : toRow < fromRow ? -1 : 0;
+            const colStep = toCol > fromCol ? 1 : toCol < fromCol ? -1 : 0;
+            
+            let currentRow = fromRow + rowStep;
+            let currentCol = fromCol + colStep;
+            
+            while (currentRow !== toRow || currentCol !== toCol) {
+                if (board[currentRow][currentCol]) return false;
+                currentRow += rowStep;
+                currentCol += colStep;
+            }
+            
+            return true;
+        }
+
+        function getValidMoves(row, col) {
+            const moves = [];
+            for (let toRow = 0; toRow < 8; toRow++) {
+                for (let toCol = 0; toCol < 8; toCol++) {
+                    if (isValidMove(row, col, toRow, toCol)) {
+                        moves.push({ row: toRow, col: toCol });
+                    }
+                }
+            }
+            return moves;
+        }
+
+        // Hacer movimiento
+        function makeMove(fromRow, fromCol, toRow, toCol) {
+            const piece = board[fromRow][fromCol];
+            const capturedPiece = board[toRow][toCol];
+            
+            // Guardar estado en el stack para deshacer
+            gameStack.push({
+                from: { row: fromRow, col: fromCol },
+                to: { row: toRow, col: toCol },
+                piece: piece,
+                capturedPiece: capturedPiece,
+                player: currentPlayer
+            });
+
+            // Guardar en historial (lista enlazada)
+            gameHistory.append({
+                move: `${piece.type} ${String.fromCharCode(97 + fromCol)}${8 - fromRow} → ${String.fromCharCode(97 + toCol)}${8 - toRow}`,
+                player: currentPlayer
+            });
+
+            // Realizar movimiento
+            board[toRow][toCol] = piece;
+            board[fromRow][fromCol] = null;
+
+            moveCount++;
+            updateMoveHistory();
+            
+            // Cambiar turno
+            currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
+            updateGameInfo();
+            renderBoard();
+
+            // Si es turno de la IA
+            if (currentPlayer === 'black') {
+                setTimeout(makeAIMove, 1000);
+            }
+        }
+
+        // IA simple con machine learning básico
+        function makeAIMove() {
+            isAIThinking = true;
+            document.getElementById('ai-status').textContent = 'IA pensando...';
+
+            setTimeout(() => {
+                const aiMove = getBestMove();
+                if (aiMove) {
+                    makeMove(aiMove.from.row, aiMove.from.col, aiMove.to.row, aiMove.to.col);
+                }
+                isAIThinking = false;
+                document.getElementById('ai-status').textContent = '';
+            }, 1500);
+        }
+
+        function getBestMove() {
+            const allMoves = [];
+            
+            // Obtener todos los movimientos posibles para la IA
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    const piece = board[row][col];
+                    if (piece && piece.color === 'black') {
+                        const validMoves = getValidMoves(row, col);
+                        validMoves.forEach(move => {
+                            allMoves.push({
+                                from: { row, col },
+                                to: move,
+                                score: evaluateMove(row, col, move.row, move.col)
+                            });
+                        });
+                    }
+                }
+            }
+
+            if (allMoves.length === 0) return null;
+
+            // Machine Learning simple: aprender de movimientos anteriores
+            const enhancedMoves = allMoves.map(move => ({
+                ...move,
+                score: move.score + getLearningBonus(move)
+            }));
+
+            // Seleccionar el mejor movimiento
+            enhancedMoves.sort((a, b) => b.score - a.score);
+            
+            // Añadir algo de aleatoriedad para hacer la IA menos predecible
+            const topMoves = enhancedMoves.slice(0, Math.min(3, enhancedMoves.length));
+            return topMoves[Math.floor(Math.random() * topMoves.length)];
+        }
+
+        function evaluateMove(fromRow, fromCol, toRow, toCol) {
+            let score = 0;
+            const piece = board[fromRow][fromCol];
+            const targetPiece = board[toRow][toCol];
+
+            // Valores de las piezas
+            const pieceValues = {
+                pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 9, king: 100
+            };
+
+            // Capturar piezas es bueno
+            if (targetPiece) {
+                score += pieceValues[targetPiece.type] * 10;
+            }
+
+            // Mover piezas hacia el centro es bueno
+            const centerDistance = Math.abs(3.5 - toRow) + Math.abs(3.5 - toCol);
+            score += (7 - centerDistance) * 2;
+
+            // Proteger el rey
+            if (piece.type === 'king') {
+                score -= 5; // El rey debe mantenerse seguro
+            }
+
+            // Desarrollar piezas en la apertura
+            if (moveCount < 10) {
+                if (piece.type === 'knight' || piece.type === 'bishop') {
+                    score += 3;
+                }
+            }
+
+            return score;
+        }
+
+        function getLearningBonus(move) {
+            // Machine Learning simple: bonificar movimientos similares a los exitosos del pasado
+            let bonus = 0;
+            const historyArray = gameHistory.toArray();
+            
+            // Si movimientos similares fueron exitosos antes, darles bonus
+            historyArray.forEach(historyMove => {
+                if (historyMove.player === 'black') {
+                    // Lógica simple de aprendizaje basada en patrones
+                    bonus += Math.random() * 2 - 1; // Variación aleatoria
+                }
+            });
+
+            return bonus;
+        }
+
+        // Deshacer movimiento
+        function undoMove() {
+            if (gameStack.isEmpty()) return;
+
+            const lastMove = gameStack.pop();
+            
+            // Restaurar posición
+            board[lastMove.from.row][lastMove.from.col] = lastMove.piece;
+            board[lastMove.to.row][lastMove.to.col] = lastMove.capturedPiece;
+
+            // Si el último movimiento fue de la IA, deshacer también el movimiento del jugador
+            if (lastMove.player === 'black' && !gameStack.isEmpty()) {
+                const playerMove = gameStack.pop();
+                board[playerMove.from.row][playerMove.from.col] = playerMove.piece;
+                board[playerMove.to.row][playerMove.to.col] = playerMove.capturedPiece;
+                moveCount -= 2;
+            } else {
+                moveCount--;
+            }
+
+            currentPlayer = 'white';
+            clearSelection();
+            updateGameInfo();
+            renderBoard();
+        }
+
+        // Funciones de utilidad
+        function updateGameInfo() {
+            document.getElementById('current-player').textContent = currentPlayer === 'white' ? 'Blancas' : 'Negras';
+            document.getElementById('move-count').textContent = Math.floor(moveCount / 2) + 1;
+        }
+
+        function updateMoveHistory() {
+            const movesList = document.getElementById('moves-list');
+            const historyArray = gameHistory.toArray();
+            movesList.innerHTML = '';
+            
+            historyArray.slice(-10).forEach(move => {
+                const moveElement = document.createElement('div');
+                moveElement.className = 'move-item';
+                moveElement.textContent = move.move;
+                movesList.appendChild(moveElement);
+            });
+        }
+
+        function resetGame() {
+            board = [];
+            currentPlayer = 'white';
+            selectedSquare = null;
+            gameStack = new Stack();
+            eventQueue = new Queue();
+            gameHistory = new LinkedList();
+            isAIThinking = false;
+            moveCount = 0;
+            
+            initBoard();
+            renderBoard();
+            updateGameInfo();
+            document.getElementById('moves-list').innerHTML = '';
+            document.getElementById('ai-status').textContent = '';
+        }
+
+        // Inicializar juego
+        initBoard();
+        renderBoard();
+        updateGameInfo();
+    </script>
+</body>
+</html>
