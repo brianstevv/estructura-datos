@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Ajedrez Básico </title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #f0f0f0;
+      font-family: sans-serif;
+    }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(8, 60px);
+      grid-template-rows: repeat(8, 60px);
+      border: 2px solid #333;
+    }
+    .cell {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 32px;
+    }
+    .white { background-color: #f0d9b5; }
+    .black { background-color: #b58863; }
+    .selected { outline: 3px solid red; }
+    .hint { box-shadow: inset 0 0 0 4px rgba(0,255,0,0.5); }
+  </style>
+</head>
+<body>
+  <div class="board" id="board"></div>
+  <script>
+    const PIECES = {
+      r: '♜', n: '♞', b: '♝', q: '♛', k: '♚', p: '♟',
+      R: '♖', N: '♘', B: '♗', Q: '♕', K: '♔', P: '♙'
+    };
+    const VALUES = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 0 };
+
+    let board = [
+      'r','n','b','q','k','b','n','r',
+      'p','p','p','p','p','p','p','p',
+      ' ',' ',' ',' ',' ',' ',' ',' ',
+      ' ',' ',' ',' ',' ',' ',' ',' ',
+      ' ',' ',' ',' ',' ',' ',' ',' ',
+      ' ',' ',' ',' ',' ',' ',' ',' ',
+      'P','P','P','P','P','P','P','P',
+      'R','N','B','Q','K','B','N','R'
+    ];
+
+    let selected = null;
+    let turn = 'w';
+    let hints = [];
+    const boardEl = document.getElementById('board');
+
+    function render() {
+      boardEl.innerHTML = '';
+      for (let i = 0; i < 64; i++) {
+        const cell = document.createElement('div');
+        cell.className = `cell ${(Math.floor(i / 8) + i) % 2 === 0 ? 'white' : 'black'}`;
+        cell.dataset.index = i;
+        if (board[i] !== ' ') cell.textContent = PIECES[board[i]];
+        if (selected === i) cell.classList.add('selected');
+        if (hints.includes(i)) cell.classList.add('hint');
+        cell.onclick = () => handleClick(i);
+        boardEl.appendChild(cell);
+      }
+    }
+
+    function handleClick(i) {
+      if (turn !== 'w') return;
+      const piece = board[i];
+      if (selected === null) {
+        if (isWhite(piece)) {
+          selected = i;
+          hints = getLegalMoves(i, 'w');
+        }
+      } else {
+        if (i === selected) {
+          selected = null;
+          hints = [];
+        } else if (hints.includes(i)) {
+          move(selected, i);
+          selected = null;
+          hints = [];
+          turn = 'b';
+          setTimeout(aiMove, 500);
+        } else {
+          selected = null;
+          hints = [];
+        }
+      }
+      render();
+    }
+
+    function isWhite(p) { return p >= 'A' && p <= 'Z'; }
+    function isBlack(p) { return p >= 'a' && p <= 'z'; }
+
+    function move(from, to) {
+      board[to] = board[from];
+      board[from] = ' ';
+    }
+
+    function isValidMove(from, to, color) {
+      const piece = board[from];
+      const target = board[to];
+      if (piece === ' ') return false;
+      if (color === 'w' && !isWhite(piece)) return false;
+      if (color === 'b' && !isBlack(piece)) return false;
+      if ((color === 'w' && isWhite(target)) || (color === 'b' && isBlack(target))) return false;
+
+      const dx = to % 8 - from % 8;
+      const dy = Math.floor(to / 8) - Math.floor(from / 8);
+      const absDx = Math.abs(dx);
+      const absDy = Math.abs(dy);
+      const dir = color === 'w' ? -1 : 1;
+
+      switch (piece.toLowerCase()) {
+        case 'p':
+          if (dx === 0 && board[to] === ' ') {
+            if (dy === dir) return true;
+            if ((color === 'w' && from >= 48 && dy === -2 && board[from - 8] === ' ') ||
+                (color === 'b' && from < 16 && dy === 2 && board[from + 8] === ' ')) return true;
+          }
+          if (absDx === 1 && dy === dir && target !== ' ') return true;
+          return false;
+        case 'r': return (dx === 0 || dy === 0) && pathClear(from, to);
+        case 'b': return absDx === absDy && pathClear(from, to);
+        case 'q': return (dx === 0 || dy === 0 || absDx === absDy) && pathClear(from, to);
+        case 'n': return (absDx === 1 && absDy === 2) || (absDx === 2 && absDy === 1);
+        case 'k': return absDx <= 1 && absDy <= 1;
+      }
+      return false;
+    }
+
+    function pathClear(from, to) {
+      const dx = Math.sign(to % 8 - from % 8);
+      const dy = Math.sign(Math.floor(to / 8) - Math.floor(from / 8));
+      let x = from % 8 + dx, y = Math.floor(from / 8) + dy;
+      while ((y * 8 + x) !== to) {
+        if (board[y * 8 + x] !== ' ') return false;
+        x += dx; y += dy;
+      }
+      return true;
+    }
+
+    function getLegalMoves(from, color) {
+      const moves = [];
+      for (let to = 0; to < 64; to++) {
+        if (isValidMove(from, to, color)) moves.push(to);
+      }
+      return moves;
+    }
+
+    function aiMove() {
+      const moves = [];
+      for (let from = 0; from < 64; from++) {
+        if (!isBlack(board[from])) continue;
+        for (let to = 0; to < 64; to++) {
+          if (isValidMove(from, to, 'b')) {
+            const val = isWhite(board[to]) ? VALUES[board[to].toLowerCase()] : 0;
+            moves.push({ from, to, val });
+          }
+        }
+      }
+      if (moves.length === 0) return;
+      moves.sort((a, b) => b.val - a.val);
+      const best = moves[0];
+      move(best.from, best.to);
+      turn = 'w';
+      render();
+    }
+
+    render();
+  </script>
+</body>
+</html>
