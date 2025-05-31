@@ -2,12 +2,13 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Ajedrez Básico </title>
+  <title>Ajedrez Básico</title>
   <style>
     body {
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
+      justify-content: center;
       height: 100vh;
       background: #f0f0f0;
       font-family: sans-serif;
@@ -17,6 +18,7 @@
       grid-template-columns: repeat(8, 60px);
       grid-template-rows: repeat(8, 60px);
       border: 2px solid #333;
+      margin-bottom: 10px;
     }
     .cell {
       width: 60px;
@@ -30,10 +32,16 @@
     .black { background-color: #b58863; }
     .selected { outline: 3px solid red; }
     .hint { box-shadow: inset 0 0 0 4px rgba(0,255,0,0.5); }
+    button {
+      padding: 8px 16px;
+      font-size: 16px;
+      margin: 5px;
+    }
   </style>
 </head>
 <body>
   <div class="board" id="board"></div>
+  <button onclick="undoMove()">Deshacer</button>
   <script>
     const PIECES = {
       r: '♜', n: '♞', b: '♝', q: '♛', k: '♚', p: '♟',
@@ -55,7 +63,14 @@
     let selected = null;
     let turn = 'w';
     let hints = [];
+
     const boardEl = document.getElementById('board');
+
+    // Pila: Guarda los movimientos para poder deshacerlos
+    const moveStack = [];
+
+    // Cola: Almacena movimientos de la IA en orden de ejecución
+    const aiQueue = [];
 
     function render() {
       boardEl.innerHTML = '';
@@ -101,8 +116,20 @@
     function isBlack(p) { return p >= 'a' && p <= 'z'; }
 
     function move(from, to) {
+      // Guardamos el movimiento en la Pila
+      moveStack.push({ from, to, captured: board[to], moved: board[from] });
       board[to] = board[from];
       board[from] = ' ';
+    }
+
+    function undoMove() {
+      if (moveStack.length === 0) return;
+      // Quitamos el último movimiento de la Pila
+      const last = moveStack.pop();
+      board[last.from] = last.moved;
+      board[last.to] = last.captured;
+      turn = turn === 'w' ? 'b' : 'w';
+      render();
     }
 
     function isValidMove(from, to, color) {
@@ -157,6 +184,15 @@
     }
 
     function aiMove() {
+      // Si hay movimientos en la Cola, los ejecutamos primero
+      if (aiQueue.length > 0) {
+        const moveData = aiQueue.shift();  // Quitamos de la Cola
+        move(moveData.from, moveData.to);
+        turn = 'w';
+        render();
+        return;
+      }
+
       const moves = [];
       for (let from = 0; from < 64; from++) {
         if (!isBlack(board[from])) continue;
@@ -167,12 +203,12 @@
           }
         }
       }
+
       if (moves.length === 0) return;
       moves.sort((a, b) => b.val - a.val);
       const best = moves[0];
-      move(best.from, best.to);
-      turn = 'w';
-      render();
+      aiQueue.push(best);  // Guardamos en la Cola
+      setTimeout(aiMove, 300);  // Ejecutamos el siguiente movimiento de la Cola
     }
 
     render();
